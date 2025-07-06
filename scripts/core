@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# Source base functions
+source "$(dirname "${BASH_SOURCE[0]}")/base"
+
+execute_install() {
+    log_info "Installing dependencies"
+}
+
+execute_start() {
+    log_info "Starting environment for local development"
+}
+
+execute_deploy() {
+    log_info "Deploying projects to production"
+}

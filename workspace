@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+# Get the directory where this script is located
+readonly SCRIPTS_DIR
+SCRIPTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Source all modules
+source "$SCRIPTS_DIR/scripts/base"
+source "$SCRIPTS_DIR/scripts/core"
+
+# Command dispatcher
+dispatch_command() {
+    local command="$1"
+
+    case "$command" in
+    "install")
+        execute_install
+        ;;
+    "start")
+        execute_start
+        ;;
+    "deploy")
+        execute_deploy
+        ;;
+    *)
+        log_error "Unknown command: $command"
+        return 1
+        ;;
+    esac
+}
+
+# Main function
+main() {
+    local command="$1"
+
+    # Check if command is provided
+    if [[ -z "$command" ]]; then
+        show_usage
+        exit 0
+    fi
+
+    # Validate command
+    validate_command "$command" || {
+        show_usage
+        exit 0
+    }
+
+    dispatch_command "$command"
+    exit $?
+}
+
+# Execute main function with all arguments
+main "$@"
