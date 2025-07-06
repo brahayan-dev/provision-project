@@ -1,0 +1,10 @@
+---
+- hosts: all
+  become: true
+
+  tasks:
+    - name: Install Dependencies
+      apt:
+        name:
+          - tree
+        state: latest
