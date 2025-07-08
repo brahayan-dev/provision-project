@@ -8,9 +8,7 @@ DIRECTORY="$HOME/Akeptous/qumran/.qumran"
 
 setup() {
     [[ ! -d "$DIRECTORY" ]] && mkdir -p "$DIRECTORY"
-
-    [[ "$VM_LIST" != *"qumran"* ]] &&
-        limactl create --name="qumran"
+    [[ "$VM_LIST" != *"qumran"* ]] && limactl create --name="qumran"
 }
 
 start() {
@@ -40,21 +38,25 @@ destroy() {
 }
 
 execute_destroy() {
-    log_info "Destroying local development"
+    log_info "Destroying Qumran VM"
     destroy
 }
 
 execute_setup() {
-    log_info "Setting-up local development"
+    log_info "Setting-up Qumran VM"
     setup
 }
 
 execute_start() {
-    log_info "Starting local development"
+    log_info "Starting Qumran VM"
     start
 }
 
 execute_stop() {
-    log_info "Stopping local development"
+    log_info "Stopping Qumran VM"
     stop
+}
+
+execute_provision() {
+    log_info "Provisioning Qumran VM"
 }
