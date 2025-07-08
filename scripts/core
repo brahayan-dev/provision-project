@@ -3,8 +3,18 @@
 # Source base functions
 source "$(dirname "${BASH_SOURCE[0]}")/base"
 
+USERNAME="qumran_user"
+PLAYBOOK="development.yml"
+DIRECTORY="$HOME/Akeptous/qumran/.qumran"
+
 setup() {
-    [[ "$(podman machine list)" != *"qumran"* ]] && podman machine init --playbook=development.yml qumran
+    [[ ! -d "$DIRECTORY" ]] && mkdir -p "$DIRECTORY"
+
+    [[ "$(podman machine list)" != *"qumran"* ]] &&
+        podman machine init \
+            --username="$USERNAME" \
+            --playbook="$PLAYBOOK" qumran \
+            --volume="$DIRECTORY:/usr/share/rpm:rw"
 }
 
 start() {
@@ -20,6 +30,7 @@ start() {
 stop() {
     if [[ "$(podman machine list)" == *"qumran*"*"Currently running"* ]]; then
         podman machine stop qumran
+        [[ -d "$DIRECTORY" ]] && rm -rf "$DIRECTORY"
     fi
 }
 
