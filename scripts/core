@@ -3,31 +3,26 @@
 # Source base functions
 source "$(dirname "${BASH_SOURCE[0]}")/base"
 
-USERNAME="qumran_user"
-PLAYBOOK="development.yml"
 DIRECTORY="$HOME/Akeptous/qumran/.qumran"
-PODMAN_MACHINE_LIST="$(podman machine list)"
+[[ -e "/opt/homebrew/bin/limactl" ]] && VM_LIST="$(limactl list)"
 
 setup() {
     [[ ! -d "$DIRECTORY" ]] && mkdir -p "$DIRECTORY"
 
-    [[ "$PODMAN_MACHINE_LIST" != *"qumran"* ]] &&
-        podman machine init \
-            --username="$USERNAME" \
-            --playbook="$PLAYBOOK" \
-            qumran # --volume="$DIRECTORY/rpm:/usr/share/rpm" \
+    [[ "$VM_LIST" != *"qumran"* ]] &&
+        limactl create --name="qumran"
 }
 
 start() {
-    if [[ "$PODMAN_MACHINE_LIST" == *"qumran"* && "$PODMAN_MACHINE_LIST" != *"qumran*"*"Currently running"* ]]; then
-        podman machine start qumran --no-info
-        podman machine ssh qumran "ansible-playbook playbook.yaml"
+    if [[ "$VM_LIST" == *"qumran"* && "$VM_LIST" != *"qumran"*"Running"* ]]; then
+        limactl start qumran
+        limactl shell qumran
     fi
 }
 
 stop() {
-    if [[ "$PODMAN_MACHINE_LIST" == *"qumran*"*"Currently running"* ]]; then
-        podman machine stop qumran
+    if [[ "$VM_LIST" == *"qumran"*"Running"* ]]; then
+        limactl stop qumran
         [[ -d "$DIRECTORY" ]] && rm -rf "$DIRECTORY"
     fi
 }
@@ -35,13 +30,13 @@ stop() {
 destroy() {
     [[ -d "$DIRECTORY" ]] && rm -rf "$DIRECTORY"
 
-    if [[ "$PODMAN_MACHINE_LIST" == *"qumran"* && "$PODMAN_MACHINE_LIST" == *"qumran*"*"Currently running"* ]]; then
-        podman machine stop qumran
-        podman machine rm qumran
+    if [[ "$VM_LIST" == *"qumran"* && "$VM_LIST" == *"qumran"*"Running"* ]]; then
+        limactl stop qumran
+        limactl delete qumran
         exit 0
     fi
 
-    [[ "$PODMAN_MACHINE_LIST" == *"qumran"* ]] && podman machine rm qumran
+    [[ "$VM_LIST" == *"qumran"* ]] && limactl delete qumran
 }
 
 execute_destroy() {
