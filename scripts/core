@@ -13,7 +13,7 @@ start() {
 
     if [[ "$answer" == *"qumran"* && "$answer" != *"qumran*"*"Currently running"* ]]; then
         podman machine start qumran --no-info
-        podman machine ssh qumran "sudo dnf update && ansible-playbook playbook.yaml"
+        podman machine ssh qumran "ansible-playbook playbook.yaml"
     fi
 }
 
