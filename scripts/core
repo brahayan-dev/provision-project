@@ -6,11 +6,12 @@ source "$(dirname "${BASH_SOURCE[0]}")/base"
 USERNAME="qumran_user"
 PLAYBOOK="development.yml"
 DIRECTORY="$HOME/Akeptous/qumran/.qumran"
+PODMAN_MACHINE_LIST="$(podman machine list)"
 
 setup() {
     [[ ! -d "$DIRECTORY" ]] && mkdir -p "$DIRECTORY"
 
-    [[ "$(podman machine list)" != *"qumran"* ]] &&
+    [[ "$PODMAN_MACHINE_LIST" != *"qumran"* ]] &&
         podman machine init \
             --username="$USERNAME" \
             --playbook="$PLAYBOOK" qumran \
@@ -18,33 +19,27 @@ setup() {
 }
 
 start() {
-    local answer
-    answer="$(podman machine list)"
-
-    if [[ "$answer" == *"qumran"* && "$answer" != *"qumran*"*"Currently running"* ]]; then
+    if [[ "$PODMAN_MACHINE_LIST" == *"qumran"* && "$PODMAN_MACHINE_LIST" != *"qumran*"*"Currently running"* ]]; then
         podman machine start qumran --no-info
         podman machine ssh qumran "ansible-playbook playbook.yaml"
     fi
 }
 
 stop() {
-    if [[ "$(podman machine list)" == *"qumran*"*"Currently running"* ]]; then
+    if [[ "$PODMAN_MACHINE_LIST" == *"qumran*"*"Currently running"* ]]; then
         podman machine stop qumran
         [[ -d "$DIRECTORY" ]] && rm -rf "$DIRECTORY"
     fi
 }
 
 destroy() {
-    local answer
-    answer="$(podman machine list)"
-
-    if [[ "$answer" == *"qumran"* && "$answer" == *"qumran*"*"Currently running"* ]]; then
+    if [[ "$PODMAN_MACHINE_LIST" == *"qumran"* && "$PODMAN_MACHINE_LIST" == *"qumran*"*"Currently running"* ]]; then
         podman machine stop qumran
         podman machine rm qumran
         exit 0
     fi
 
-    [[ "$answer" == *"qumran"* ]] && podman machine rm qumran
+    [[ "$PODMAN_MACHINE_LIST" == *"qumran"* ]] && podman machine rm qumran
 }
 
 execute_destroy() {
