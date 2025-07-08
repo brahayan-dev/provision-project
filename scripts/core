@@ -14,8 +14,8 @@ setup() {
     [[ "$PODMAN_MACHINE_LIST" != *"qumran"* ]] &&
         podman machine init \
             --username="$USERNAME" \
-            --playbook="$PLAYBOOK" qumran \
-            --volume="$DIRECTORY:/usr/share/rpm:rw"
+            --playbook="$PLAYBOOK" \
+            qumran # --volume="$DIRECTORY/rpm:/usr/share/rpm" \
 }
 
 start() {
@@ -33,6 +33,8 @@ stop() {
 }
 
 destroy() {
+    [[ -d "$DIRECTORY" ]] && rm -rf "$DIRECTORY"
+
     if [[ "$PODMAN_MACHINE_LIST" == *"qumran"* && "$PODMAN_MACHINE_LIST" == *"qumran*"*"Currently running"* ]]; then
         podman machine stop qumran
         podman machine rm qumran
