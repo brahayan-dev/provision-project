@@ -12,14 +12,17 @@ dispatch_command() {
     local command="$1"
 
     case "$command" in
-    "install")
-        execute_install
+    "setup")
+        execute_setup
+        ;;
+    "stop")
+        execute_stop
         ;;
     "start")
         execute_start
         ;;
-    "deploy")
-        execute_deploy
+    "destroy")
+        execute_destroy
         ;;
     *)
         log_error "Unknown command: $command"
