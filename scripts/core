@@ -37,9 +37,36 @@ destroy() {
     [[ "$VM_LIST" == *"qumran"* ]] && limactl delete qumran
 }
 
+ping() {
+    if [[ "$VM_LIST" != *"qumran"*"Running"* ]]; then
+        log_warn "Qumran VM is not running. Please run 'workspace start' first."
+        return 1
+    fi
+
+    log_info "Installing/updating Ansible and running ping test inside Qumran VM."
+    limactl shell qumran bash <<'EOF'
+set -e
+echo "INFO: Updating package list..."
+sudo apt-get update -y -qq
+echo "INFO: Installing software-properties-common..."
+sudo apt-get install -y -qq software-properties-common
+echo "INFO: Adding Ansible PPA..."
+sudo add-apt-repository --yes --update ppa:ansible/ansible
+echo "INFO: Installing Ansible..."
+sudo apt-get install -y -qq ansible
+echo "INFO: Running ansible ping..."
+ansible localhost -m ping
+EOF
+}
+
 execute_destroy() {
     log_info "Destroying Qumran VM"
     destroy
+}
+
+execute_ping() {
+    log_info "Checking Ansible status on Qumran VM"
+    ping
 }
 
 execute_setup() {

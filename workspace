@@ -24,6 +24,9 @@ dispatch_command() {
     "destroy")
         execute_destroy
         ;;
+    "ping")
+        execute_ping
+        ;;
     *)
         log_error "Unknown command: $command"
         return 1

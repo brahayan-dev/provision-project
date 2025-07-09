@@ -7,7 +7,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Constants
-SUPPORTED_COMMANDS=("setup" "stop" "start" "destroy")
+SUPPORTED_COMMANDS=("setup" "stop" "start" "destroy" "ping")
 
 # Logging functions
 log_info() {
@@ -47,6 +47,7 @@ Commands:
     start   - Start the Qumran VM and run the development playbook
     stop    - Stop the Qumran VM
     destroy - Destroy the Qumran VM
+    ping    - Check Ansible status on the Qumran VM
 
 EOF
 }
